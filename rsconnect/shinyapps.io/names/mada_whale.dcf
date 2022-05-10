@@ -1,0 +1,11 @@
+name: mada_whale
+title:
+username:
+account: names
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 6270052
+bundleId: 5890185
+url: https://names.shinyapps.io/mada_whale/
+when: 1652169092.36707
+lastSyncTime: 1652169092.36707
