@@ -19,4 +19,4 @@ Contains XML Forms with meta data for surveys.
 
 The remaining scripts are for the RShiny dashboard, which lets user view and download data. 
 
-Note: to ru this code you will need to save a `login_creds.R` file. Contact me for username and password. 
+Note: to run this code you will need to save a `login_creds.R` file. Contact me for username and password. The project is open source: anyone can fill in the forms or access the data. 
