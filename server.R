@@ -1,31 +1,66 @@
 function(input, output) {
   
+### Graphs ####
+  
+
   output$plot <- renderPlot({
+
+        
+    t<-trip%>%
+      select(survey_end,`meduses`,`salpes`,`krill`,`trichodesmium`)%>%
+      gather(key=faune,value=present,-survey_end)%>%
+      ggplot(aes(survey_end,faune,fill=present))+
+      geom_tile(color="white")+
+      theme_minimal()+
+      labs(x="Survey submission",y="",fill="Identified")
     
-    p <- dfm%>%
-      ggplot(aes(What_color_was_it))+
-      geom_bar(stat = "count",fill="lightblue")+
-      theme_minimal()
+    s<-shark_sightings%>%
+      ggplot(aes(sex,fill=sex))+
+      geom_bar(stat="count")+
+      theme_minimal()+
+      theme(legend.position = "none")+
+      scale_fill_brewer(type="qual")
     
-    print(p)
+    m<-megaf_sightings%>%
+      ggplot(aes(espece))+
+      geom_bar(stat="count",fill="lightblue")+
+      theme_minimal()+
+      theme(legend.position = "none")+
+      labs(x="",y="Number of sightings")
     
+    
+    ifelse(input$sel_frame=="Other fauna",print(t),
+           ifelse(input$sel_frame=="Sharks",print(s),print(m)))
   }, height=400)
   
-  output$table <- renderTable({
-    t<-dfm%>%
-      rename(Date=Enter_a_date,
-             Comment=Why_don_t_you_fill_i_some_free_form_text,
-             Coordinates=Record_your_current_location,
-             Colour=What_color_was_it)%>%
-      select(-Point_and_shoot_Use_mera_to_take_a_photo)
-    print(t)
-    })
+### Data download ###
+
+## Table selection
+  datasetInput <- reactive({
+    switch(input$dataset,
+            "Dive details" = trip,
+            "Shark sightings" = shark_sightings,
+            "Shark scars" = shark_scars,
+            "Other megafauna sightings" = megaf_sightings,
+            "Previous years data" = dfm)
+  })
   
-  # Download CSV
+## Show table (main panel)
+  output$table <- renderDT(
+      {datasetInput()},
+      filter = "top",
+      options = list(
+        pageLength = 5
+      )
+    )
+  
+## Download CSV
   output$downloadData <- downloadHandler(
-    filename = "dfm.csv",
+    filename = function() {
+      paste(input$dataset, ".csv", sep = "")
+    },
     content = function(file) {
-      write.csv(dfm, file, row.names = FALSE)
+      write.csv(datasetInput(), file, row.names = FALSE)
     }
   )
   
