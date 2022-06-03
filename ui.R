@@ -1,7 +1,9 @@
 rm(list=ls())
 source("packages.R")
-source("backdata.R")
+source("login_creds.R")
 source("call_data.R")
+source("call_photos.R")
+source("merges.R")
 
 fluidPage(
   
@@ -32,11 +34,18 @@ fluidPage(
                                            choices = list("Dive details",
                                                           "Shark sightings",
                                                           "Shark scars",
-                                                          "Other megafauana sightings",
-                                                          "Previous years data"),
+                                                          "Megafauna sightings",
+                                                          "Photo IDs"),
                                              selected = "Shark sightings"),
                                    downloadButton("downloadData", "Download")),
-                      mainPanel(DTOutput('table')))
+                      mainPanel(DTOutput('table'))),
+    
+    tabPanel("Outstanding sharks",
+             h3("sightings needing classification"),
+             h5("Sharks shown here have a sighting ID, but no photos or ws.org ID"),
+             DTOutput("unknown_sharks"))
+    
+    
   )
 ) 
   

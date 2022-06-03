@@ -38,11 +38,11 @@ function(input, output) {
 ## Table selection
   datasetInput <- reactive({
     switch(input$dataset,
-            "Dive details" = trip,
-            "Shark sightings" = shark_sightings,
+            "Dive details" = trip_display,
+            "Shark sightings" = shark_sightings_display,
             "Shark scars" = shark_scars,
-            "Other megafauna sightings" = megaf_sightings,
-            "Previous years data" = dfm)
+            "Megafauna sightings" = megaf_sightings,
+            "Photo IDs" = pics)
   })
   
 ## Show table (main panel)
@@ -53,6 +53,7 @@ function(input, output) {
         pageLength = 5
       )
     )
+
   
 ## Download CSV
   output$downloadData <- downloadHandler(
@@ -63,5 +64,15 @@ function(input, output) {
       write.csv(datasetInput(), file, row.names = FALSE)
     }
   )
+  
+  ## Show table (main panel)
+  output$unknown_sharks <- renderDT(
+    unknown_sharks,
+    filter = "top",
+    options = list(
+      pageLength = 5
+    )
+  )
+  
   
 }
