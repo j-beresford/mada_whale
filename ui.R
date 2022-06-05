@@ -17,9 +17,6 @@ fluidPage(
     tabPanel("About",h3("Mada whale shark project"),
                       h5("Here is some blah blah about whale sharks")),
 
-    tabPanel("Photos",h3("ID images"),
-             uiOutput("picture")),
-    
     tabPanel("Graphs",h3("Graphs for survey data"),
                       sidebarPanel(h3("Filters"),
                                    selectInput("sel_frame",
@@ -28,23 +25,24 @@ fluidPage(
                                                                "Megafauna",
                                                                "Sharks"))),
                       mainPanel(plotOutput('plot',height="10"))),
-    tabPanel("Data Tables",h3("View and download data"),
+    tabPanel("Sightings Data",h3("View and download data"),
                       sidebarPanel(selectInput("dataset", 
                                            label = h3("Select Dataset"), 
-                                           choices = list("Dive details",
+                                           choices = list("Dives",
                                                           "Shark sightings",
-                                                          "Shark scars",
-                                                          "Megafauna sightings",
-                                                          "Photo IDs"),
+                                                          "Shark scar sightings",
+                                                          "Megafauna sightings"),
                                              selected = "Shark sightings"),
                                    downloadButton("downloadData", "Download")),
                       mainPanel(DTOutput('table'))),
     
-    tabPanel("Outstanding sharks",
-             h3("sightings needing classification"),
+    tabPanel("Unclassified sharks",
+             h3("Sightings needing classification"),
              h5("Sharks shown here have a sighting ID, but no photos or ws.org ID"),
-             DTOutput("unknown_sharks"))
+             DTOutput("unknown_sharks")),
     
+    tabPanel("Known sharks",h3("One row per identified shark"),
+             DTOutput("mega"))
     
   )
 ) 

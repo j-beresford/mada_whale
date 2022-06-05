@@ -38,11 +38,11 @@ function(input, output) {
 ## Table selection
   datasetInput <- reactive({
     switch(input$dataset,
-            "Dive details" = trip_display,
+            "Dives" = trip_display,
             "Shark sightings" = shark_sightings_display,
-            "Shark scars" = shark_scars,
-            "Megafauna sightings" = megaf_sightings,
-            "Photo IDs" = pics)
+            "Shark scar sightings" = shark_scars_display,
+            "Megafauna sightings" = megaf_sightings_display
+           )
   })
   
 ## Show table (main panel)
@@ -50,7 +50,8 @@ function(input, output) {
       {datasetInput()},
       filter = "top",
       options = list(
-        pageLength = 5
+        pageLength = 10,
+        scrollX=TRUE
       )
     )
 
@@ -65,12 +66,22 @@ function(input, output) {
     }
   )
   
-  ## Show table (main panel)
+  ## Show table (unknown)
   output$unknown_sharks <- renderDT(
     unknown_sharks,
     filter = "top",
     options = list(
-      pageLength = 5
+      pageLength = 10,
+      scrollX=TRUE
+    )
+  )
+  ## Show table (mega)
+  output$mega <- renderDT(
+    mega,
+    filter = "top",
+    options = list(
+      pageLength = 10,
+      scrollX=TRUE
     )
   )
   
