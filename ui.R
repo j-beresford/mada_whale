@@ -42,7 +42,7 @@ fluidPage(
              DTOutput("unknown_sharks")),
     
     tabPanel("Known sharks",h3("One row per identified shark"),
-             DTOutput("mega"))
+             DTOutput("known_sharks"))
     
   )
 ) 

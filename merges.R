@@ -20,13 +20,21 @@ shark_scars_display<-shark_scars%>%
   select(-trip_id,-scar_id,-id_test)
 
 ##### Merge tables ######
-unknown_sharks<-pics%>%
+sharks<-pics%>%
   mutate(shark_sighting_id=str_remove_all(shark_sighting_id,"uuid:"))%>%
   rename(sighting_id=shark_sighting_id)%>%
-  full_join(shark_sightings,by="sighting_id")%>%
-  filter(is.na(known))%>%
-  select(sighting_id,shark_name_known)
+  full_join(shark_sightings,by="sighting_id")
 
+unknown_sharks<-sharks%>%
+  filter(is.na(known))
+
+known_sharks<-sharks%>%
+  filter(!is.na(known))%>%
+  select(-known)
+
+known_sharks$download_url <- paste0("<a href='",known_sharks$download_url,"'>Photo","</a>")
+
+known_sharks$download_url
 
 ##### MEGA Table #########
 mega<-trip%>%
@@ -35,3 +43,6 @@ mega<-trip%>%
   mutate(survey_start=as_datetime(survey_start))%>%
   mutate(survey_end=as_datetime(survey_end))%>%
   select(-"formhub/uuid",-"client_identifier",-"meta/instanceID",-"_xform_id_string",-"_uuid",-"__version__",-"_submission_time",-"_submitted_by",-"_status",-"sighting_number")
+
+
+shark_scars

@@ -75,9 +75,10 @@ function(input, output) {
       scrollX=TRUE
     )
   )
-  ## Show table (mega)
-  output$mega <- renderDT(
-    mega,
+  ## Show table (known)
+  output$known_sharks <- renderDT(
+    known_sharks,
+    escape = FALSE,
     filter = "top",
     options = list(
       pageLength = 10,
