@@ -1,11 +1,12 @@
 function(input, output) {
   
 ### Graphs ####
-  
+
+  output$showfile <- renderUI({
+    includeHTML("map.html")})
 
   output$plot <- renderPlot({
 
-        
     t<-trip%>%
       select(survey_end,`meduses`,`salpes`,`krill`,`trichodesmium`)%>%
       gather(key=faune,value=present,-survey_end)%>%

@@ -16,7 +16,10 @@ fluidPage(
              
     tabPanel("About",h3("Mada whale shark project"),
                       h5("Here is some blah blah about whale sharks")),
-
+    
+    tabPanel("Maps",h3("here is a map"),
+             htmlOutput("mapping")),
+    
     tabPanel("Graphs",h3("Graphs for survey data"),
                       sidebarPanel(h3("Filters"),
                                    selectInput("sel_frame",
@@ -25,6 +28,10 @@ fluidPage(
                                                                "Megafauna",
                                                                "Sharks"))),
                       mainPanel(plotOutput('plot',height="10"))),
+    
+    tabPanel("Known sharks",h3("One row per identified shark"),
+             DTOutput("known_sharks")),
+    
     tabPanel("Sightings Data",h3("View and download data"),
                       sidebarPanel(selectInput("dataset", 
                                            label = h3("Select Dataset"), 
@@ -36,14 +43,10 @@ fluidPage(
                                    downloadButton("downloadData", "Download")),
                       mainPanel(DTOutput('table'))),
     
-    tabPanel("Unclassified sharks",
+    tabPanel("Unclassified",
              h3("Sightings needing classification"),
              h5("Sharks shown here have a sighting ID, but no photos or ws.org ID"),
-             DTOutput("unknown_sharks")),
-    
-    tabPanel("Known sharks",h3("One row per identified shark"),
-             DTOutput("known_sharks"))
-    
+             DTOutput("unknown_sharks"))
   )
 ) 
   
