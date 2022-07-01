@@ -5,7 +5,7 @@ account: names
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 6270052
-bundleId: 6004278
+bundleId: 6016221
 url: https://beresford.shinyapps.io/mada_whale/
-when: 1655152614.86947
-lastSyncTime: 1655152614.87046
+when: 1655445612.5117
+lastSyncTime: 1655445612.5117

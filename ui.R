@@ -15,10 +15,24 @@ fluidPage(
   navbarPage(title = "Mada Whale Shark Project",collapsible = TRUE,
              
     tabPanel("About",h3("Mada whale shark project"),
-                      h5("Here is some blah blah about whale sharks")),
+                      h5("This website is an internal tool designed to have several uses: (a) viewing survey output tables, (b) automatically producing data summaries and visualisations, (c) assigning shark IDs to sightings.")),
     
-    tabPanel("Maps",h3("here is a map"),
-             htmlOutput("mapping")),
+    tabPanel("Classification form",
+             h4("This form links our sighting IDs with I3S shark IDs"),
+             selectInput("sighting_id", "Enter sighting ID", 
+                         choices = unknown_sharks$sighting_id),
+             textInput("i3s_id", "Enter I3S ID", ""),
+             radioButtons("no_id_reason","File as:",
+                choices = list(
+                            "Done - I3S ID provided"=NA,  
+                            "To do - Bad photo/need advice"="advice_needed",
+                            "Discarded - Photo is unusable"="unusable_sighting"),
+                selected = NA),
+             helpText("If you have an I3S ID, leave as default",
+                      "If no I3S ID, leave Q2 blank and select a reason."),
+             actionButton("submit", "Submit"),
+             tags$hr(),
+             DT::dataTableOutput("responses")),
     
     tabPanel("Graphs",h3("Graphs for survey data"),
                       sidebarPanel(h3("Filters"),

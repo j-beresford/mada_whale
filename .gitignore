@@ -3,3 +3,4 @@
 .RData
 .Ruserdata
 /login_creds.R
+.secrets

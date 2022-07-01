@@ -1,9 +1,45 @@
-function(input, output) {
+gs4_auth(cache=".secrets", email="justintberesford@gmail.com")
+ss <- gs4_get("https://docs.google.com/spreadsheets/d/1yx7zDs0S4H9gK78mAab2-eyy__AbG84ZpBOy9mbM6Vk/edit#gid=0")
+
+saveData <- function(data) {
+  # The data must be a dataframe rather than a named vector
+  data <- data %>% as.list() %>% data.frame()
+  # Add the data as a new row
+  sheet_append(ss, data)
+}
+
+loadData <- function() {
+  # Read the data
+  read_sheet(ss)
+}
+
+
+
+# Define the fields we want to save from the form
+fields <- c("sighting_id", "i3s_id","no_id_reason")
+
+
+function(input, output, session) {
+  
+  formData <- reactive({
+    data <- sapply(fields, function(x) input[[x]])
+    data
+  })
+  
+  # When the Submit button is clicked, save the form data
+  observeEvent(input$submit, {
+    saveData(formData())
+  })
+  
+  # Show the previous responses
+  # (update with current response when Submit is clicked)
+  output$responses <- DT::renderDataTable({
+    input$submit
+    loadData()
+  })      
+  
   
 ### Graphs ####
-
-  output$showfile <- renderUI({
-    includeHTML("map.html")})
 
   output$plot <- renderPlot({
 
