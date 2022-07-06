@@ -1,8 +1,25 @@
-body {
-  background-color: white;
-  color: black;}
-
-h1 {
-  color: black;
+* {
+   color: #04062e;
 }
 
+
+body {
+  background-color: white;}
+
+.navbar-default .navbar-nav>li>a {
+    color: white !important;
+}
+
+.navbar-default {
+    background-color: #07226e !important;
+    margin-left: -20px;
+    margin-right: -20px;
+}
+
+.navbar-default:hover {
+    background-color: #07226e !important;
+}
+
+.title-logo {
+  color: white !important;
+}
