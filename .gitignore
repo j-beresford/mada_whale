@@ -5,3 +5,4 @@
 /login_creds.R
 .secrets
 /data_backup
+/aws.R
