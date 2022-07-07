@@ -2,7 +2,9 @@ rm(list=ls())
 source("packages.R")
 source("login_creds.R")
 source("call_data.R")
+source("mapping.R")
 source("merges.R")
+
 
 fluidPage(
   
@@ -13,10 +15,14 @@ fluidPage(
   
   navbarPage(title = "Mada Whale Shark Project",collapsible = TRUE,
              
-    tabPanel("About",h3("Mada whale shark project"),
-                      h5("This website is an internal tool designed to have several uses:                       (a) viewing survey output tables, (b) automatically producing data                        summaries and visualisations, (c) assigning shark IDs to sightings."                       )),
+    tabPanel("About",
+             h3("Mada whale shark project"),
+             p("This website is an internal tool designed to have several uses:"),                     p("(a) viewing survey output tables,"),
+             p("(b) automatically producing datasummaries and visualisations,"),
+             p("(c) assigning shark IDs to sightings")
+           ),
     
-    tabPanel("Sightings",h3("View and download data"),
+    tabPanel("Raw Data",h3("View and download data"),
              sidebarPanel(selectInput("dataset", 
                                       label = h3("Select Dataset"), 
                                       choices = list("Dives",
@@ -27,14 +33,24 @@ fluidPage(
                           downloadButton("downloadData", "Download")),
              mainPanel(DTOutput('table'))),
     
-    tabPanel("Unclassified",
-             h3("Sightings needing classification"),
-             h5("Sharks shown here have a sighting ID, but no photos or ws.org ID"),
-             DTOutput("unknown_sharks")),
+    navbarMenu("Sightings",
+         tabPanel("Unclassified",
+            h3("Sightings needing classification"),
+            h5("Sharks shown here have a sighting ID, but no photos or ws.org ID"),
+            DTOutput("unclassified_sightings")),
+         tabPanel("Unusable",
+                  h3("Sightings needing classification"),
+                  h5("Sharks shown here have a sighting ID, but no photos or ws.org ID"),
+                  DTOutput("unusable_sightings")),
+         tabPanel("Classified",
+            h3("One row per identified shark"),
+            DTOutput("classified_sightings"))
+         
+    ),
     
     tabPanel("Classification form",
              h4("This form links our sighting IDs with I3S shark IDs"),
-             selectInput("sighting_id", "Enter sighting ID", 
+             selectizeInput("sighting_id", "Enter sighting ID", 
                          choices = unknown_sharks$sighting_id),
              textInput("i3s_id", "Enter I3S ID", ""),
              radioButtons("no_id_reason","File as:",
@@ -49,9 +65,13 @@ fluidPage(
              tags$hr(),
              DT::dataTableOutput("responses")),
     
-    
-    tabPanel("Known sharks",h3("One row per identified shark"),
-             DTOutput("known_sharks")),
+    tabPanel("Clean data",
+             sidebarPanel(selectInput("clean_dataset", 
+                  label = h3("Select Dataset"), 
+                  choices = list("Known sharks"),
+                  selected = "Known sharks")),
+             h3("Table with clean data")),
+      
     
     tabPanel("Graphs",h3("Graphs for survey data"),
              sidebarPanel(h3("Filters"),

@@ -12,20 +12,12 @@ megaf_sightings_display <- megaf_sightings %>%
 shark_scars_display<-shark_scars%>%
   select(-trip_id,-scar_id,-id_test)
 
-##### Get mapping file ########
-mapping <-read_sheet(
-  gs4_get("https://docs.google.com/spreadsheets/d/1yx7zDs0S4H9gK78mAab2-eyy__AbG84ZpBOy9mbM6Vk/edit#gid=0"))
 
-
-##### Merge tables ######
+#### Merge tables ######
 sharks<-shark_sightings%>%
-  mutate(trip_id=as.numeric(trip_id))%>%
-  full_join(trip_display,by="trip_id")%>%
-  full_join(mapping,by="sighting_id")
-
-known_sharks<-sharks
-unknown_sharks<-sharks
-
+   mutate(trip_id=as.numeric(trip_id))%>%
+   full_join(trip_display,by="trip_id")%>%
+   full_join(mapping,by="sighting_id")
 
 ##### MEGA Table #########
 mega<-trip%>%
@@ -42,3 +34,9 @@ shark_sightings_display <- mega %>%
   select(all_of(shark_sightings_vars))%>%
   mutate(survey_start=as_datetime(survey_start))
 
+
+
+########### 
+##### Merge tables ######
+known_sharks<-sharks
+unknown_sharks<-sharks

@@ -26,7 +26,7 @@ function(input, output, session) {
   formData <- reactive({
     data <- sapply(fields, function(x) input[[x]])
     data
-    })
+  })
   
   # When the Submit button is clicked, save the form data
   observeEvent(input$submit, {
@@ -40,10 +40,10 @@ function(input, output, session) {
     loadData()
   })
   
-### Graphs ####
-
+  ### Graphs ####
+  
   output$plot <- renderPlot({
-
+    
     t<-trip%>%
       select(survey_end,`meduses`,`salpes`,`krill`,`trichodesmium`)%>%
       gather(key=faune,value=present,-survey_end)%>%
@@ -71,30 +71,30 @@ function(input, output, session) {
            ifelse(input$sel_frame=="Sharks",print(s),print(m)))
   }, height=400)
   
-### Data download ###
-
-## Table selection
+  ### Data download ###
+  
+  ## Table selection
   datasetInput <- reactive({
     switch(input$dataset,
-            "Dives" = trip_display,
-            "Shark sightings" = shark_sightings_display,
-            "Shark scar sightings" = shark_scars_display,
-            "Megafauna sightings" = megaf_sightings_display
-           )
+           "Dives" = trip_display,
+           "Shark sightings" = shark_sightings_display,
+           "Shark scar sightings" = shark_scars_display,
+           "Megafauna sightings" = megaf_sightings_display
+    )
   })
   
-## Show table (main panel)
+  ## Show table (main panel)
   output$table <- renderDT(
-      {datasetInput()},
-      filter = "top",
-      options = list(
-        pageLength = 10,
-        scrollX=TRUE
-      )
+    {datasetInput()},
+    filter = "top",
+    options = list(
+      pageLength = 10,
+      scrollX=TRUE
     )
-
+  )
   
-## Download CSV
+  
+  ## Download CSV
   output$downloadData <- downloadHandler(
     filename = function() {
       paste(input$dataset, ".csv", sep = "")
@@ -104,25 +104,64 @@ function(input, output, session) {
     }
   )
   
+  ###############Classification form###############################
+
+
+#  updateSelectizeInput(session,"sighting_id",
+ #                      choices=unknown_sharks$sighting_id)
+  
+  ############# Sightings (class, unclass, unusable) ##########
+  
   ## Show table (unknown)
-  output$unknown_sharks <- renderDT(
-    unknown_sharks,
-    filter = "top",
-    options = list(
-      pageLength = 10,
-      scrollX=TRUE
-    )
-  )
-  ## Show table (known)
-  output$known_sharks <- renderDT(
-    known_sharks,
-    escape = FALSE,
-    filter = "top",
-    options = list(
-      pageLength = 10,
-      scrollX=TRUE
-    )
+  mapUpdateUNClassified <- function() {
+    source("mapping.R")
+    uc<-shark_sightings%>%
+      mutate(trip_id=as.numeric(trip_id))%>%
+      full_join(trip_display,by="trip_id")%>%
+      full_join(mapping,by="sighting_id")%>%
+      filter(!no_id_reason %in% c("unusable_sighting"))%>%
+      filter(is.na(i3s_id))
+    return(uc)
+  }
+  
+  output$unclassified_sightings <- renderDataTable({
+    input$submit
+    mapUpdateUNClassified()},
+    options = list(scrollX=TRUE, scrollCollapse=TRUE)
   )
   
+  ## Show table (unusable sightings)
+  
+  mapUpdateUnusable <- function() {
+    source("mapping.R")
+    shark_sightings%>%
+      mutate(trip_id=as.numeric(trip_id))%>%
+      full_join(trip_display,by="trip_id")%>%
+      full_join(mapping,by="sighting_id")%>%
+      filter(no_id_reason %in% c("unusable_sighting"))
+  }
+  
+  output$unusable_sightings <- renderDataTable({
+    input$submit
+    mapUpdateUnusable()},
+    options = list(scrollX=TRUE, scrollCollapse=TRUE)
+  )
+  
+  
+  ## Show table (known)
+  mapUpdateClassified <- function() {
+    source("mapping.R")
+    shark_sightings%>%
+      mutate(trip_id=as.numeric(trip_id))%>%
+      full_join(trip_display,by="trip_id")%>%
+      full_join(mapping,by="sighting_id")%>%
+      filter(!is.na(i3s_id))
+  }
+  
+  output$classified_sightings <- renderDataTable({
+    input$submit
+    mapUpdateClassified()},
+    options = list(scrollX=TRUE, scrollCollapse=TRUE)
+  )
   
 }

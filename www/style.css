@@ -1,23 +1,30 @@
-* {
-   color: #04062e;
+*{
+  color:#282828;
 }
 
 
 body {
   background-color: white;}
 
+.navbar-default .navbar-brand {
+                         color: #FFFFFF;}
+
 .navbar-default .navbar-nav>li>a {
     color: white !important;
 }
 
 .navbar-default {
-    background-color: #07226e !important;
+    background-color: #181f80 !important;
     margin-left: -20px;
     margin-right: -20px;
 }
 
 .navbar-default:hover {
-    background-color: #07226e !important;
+    background-color: #181f80 !important;
+}
+
+.caret {
+  color:white;
 }
 
 .title-logo {
