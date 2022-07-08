@@ -71,7 +71,7 @@ function(input, output, session) {
            ifelse(input$sel_frame=="Sharks",print(s),print(m)))
   }, height=400)
   
-  ### Data download ###
+  ############### Data raw download ###############
   
   ## Table selection
   datasetInput <- reactive({
@@ -163,5 +163,37 @@ function(input, output, session) {
     mapUpdateClassified()},
     options = list(scrollX=TRUE, scrollCollapse=TRUE)
   )
+
+  ############### Clean data download ###############
   
+  ## Table selection
+  cleanDatasetInput <- reactive({
+    switch(input$known_dataset,
+           "Known sharks" = mapUpdateClassified()
+    )
+  })
+  
+  ## Show table (main panel)
+  output$table_clean <- renderDT(
+    {cleanDatasetInput()},
+    filter = "top",
+    options = list(
+      pageLength = 10,
+      scrollX=TRUE
+    )
+  )
+  
+  
+  ## Download CSV
+  output$downloadCleanData <- downloadHandler(
+    filename = function() {
+      paste(input$known_dataset, ".csv", sep = "")
+    },
+    content = function(file) {
+      write.csv(datasetInput(), file, row.names = FALSE)
+    }
+  )
+  
+  
+
 }

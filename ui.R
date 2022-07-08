@@ -22,8 +22,8 @@ fluidPage(
              p("(c) assigning shark IDs to sightings")
            ),
     
-    tabPanel("Raw Data",h3("View and download data"),
-             sidebarPanel(selectInput("dataset", 
+    tabPanel("Raw Data",h3("View and download raw data"),
+             sidebarPanel(selectizeInput("dataset", 
                                       label = h3("Select Dataset"), 
                                       choices = list("Dives",
                                                      "Shark sightings",
@@ -51,7 +51,10 @@ fluidPage(
     tabPanel("Classification form",
              h4("This form links our sighting IDs with I3S shark IDs"),
              selectizeInput("sighting_id", "Enter sighting ID", 
-                         choices = unknown_sharks$sighting_id),
+                         choices = unknown_sharks$sighting_id,
+                         options = list(
+                           placeholder = 'Please select an option below',
+                           onInitialize = I('function() { this.setValue(""); }'))),
              textInput("i3s_id", "Enter I3S ID", ""),
              radioButtons("no_id_reason","File as:",
                 choices = list(
@@ -65,13 +68,13 @@ fluidPage(
              tags$hr(),
              DT::dataTableOutput("responses")),
     
-    tabPanel("Clean data",
-             sidebarPanel(selectInput("clean_dataset", 
-                  label = h3("Select Dataset"), 
-                  choices = list("Known sharks"),
-                  selected = "Known sharks")),
-             h3("Table with clean data")),
-      
+    tabPanel("Clean Data",h3("View and download clean shark data"),
+             sidebarPanel(selectInput("known_dataset", 
+                                      label = h3("Select Dataset"), 
+                                      choices = list("Known sharks")),
+                          downloadButton("downloadCleanData", "Download")),
+             mainPanel(DTOutput('table_clean'))),
+    
     
     tabPanel("Graphs",h3("Graphs for survey data"),
              sidebarPanel(h3("Filters"),
