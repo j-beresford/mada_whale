@@ -4,6 +4,7 @@ source("login_creds.R")
 source("call_data.R")
 source("mapping.R")
 source("merges.R")
+source("functions.R")
 
 
 fluidPage(
@@ -71,7 +72,8 @@ fluidPage(
     tabPanel("Clean Data",h3("View and download clean shark data"),
              sidebarPanel(selectInput("known_dataset", 
                                       label = h3("Select Dataset"), 
-                                      choices = list("Known sharks")),
+                                      choices = list("Known sharks",
+                                                     "Unique daily sightings")),
                           downloadButton("downloadCleanData", "Download")),
              mainPanel(DTOutput('table_clean'))),
     

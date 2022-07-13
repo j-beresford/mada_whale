@@ -113,16 +113,6 @@ function(input, output, session) {
   ############# Sightings (class, unclass, unusable) ##########
   
   ## Show table (unknown)
-  mapUpdateUNClassified <- function() {
-    source("mapping.R")
-    uc<-shark_sightings%>%
-      mutate(trip_id=as.numeric(trip_id))%>%
-      full_join(trip_display,by="trip_id")%>%
-      full_join(mapping,by="sighting_id")%>%
-      filter(!no_id_reason %in% c("unusable_sighting"))%>%
-      filter(is.na(i3s_id))
-    return(uc)
-  }
   
   output$unclassified_sightings <- renderDataTable({
     input$submit
@@ -132,14 +122,6 @@ function(input, output, session) {
   
   ## Show table (unusable sightings)
   
-  mapUpdateUnusable <- function() {
-    source("mapping.R")
-    shark_sightings%>%
-      mutate(trip_id=as.numeric(trip_id))%>%
-      full_join(trip_display,by="trip_id")%>%
-      full_join(mapping,by="sighting_id")%>%
-      filter(no_id_reason %in% c("unusable_sighting"))
-  }
   
   output$unusable_sightings <- renderDataTable({
     input$submit
@@ -149,14 +131,6 @@ function(input, output, session) {
   
   
   ## Show table (known)
-  mapUpdateClassified <- function() {
-    source("mapping.R")
-    shark_sightings%>%
-      mutate(trip_id=as.numeric(trip_id))%>%
-      full_join(trip_display,by="trip_id")%>%
-      full_join(mapping,by="sighting_id")%>%
-      filter(!is.na(i3s_id))
-  }
   
   output$classified_sightings <- renderDataTable({
     input$submit
@@ -166,12 +140,20 @@ function(input, output, session) {
 
   ############### Clean data download ###############
   
+  
+
+  
+  
   ## Table selection
   cleanDatasetInput <- reactive({
     switch(input$known_dataset,
-           "Known sharks" = mapUpdateClassified()
+           "Known sharks" = mapUpdateKnownSharks(),
+           "Unique daily sightings" = mapUpdateUniqueTripSightings()
     )
   })
+  
+  
+  
   
   ## Show table (main panel)
   output$table_clean <- renderDT(
