@@ -40,37 +40,6 @@ function(input, output, session) {
     loadData()
   })
   
-  ### Graphs ####
-  
-  output$plot <- renderPlot({
-    
-    t<-trip%>%
-      select(survey_end,`meduses`,`salpes`,`krill`,`trichodesmium`)%>%
-      gather(key=faune,value=present,-survey_end)%>%
-      ggplot(aes(survey_end,faune,fill=present))+
-      geom_tile(color="white")+
-      theme_minimal()+
-      labs(x="Survey submission",y="",fill="Identified")
-    
-    s<-shark_sightings%>%
-      ggplot(aes(sex,fill=sex))+
-      geom_bar(stat="count")+
-      theme_minimal()+
-      theme(legend.position = "none")+
-      scale_fill_brewer(type="qual")
-    
-    m<-megaf_sightings%>%
-      ggplot(aes(espece))+
-      geom_bar(stat="count",fill="lightblue")+
-      theme_minimal()+
-      theme(legend.position = "none")+
-      labs(x="",y="Number of sightings")
-    
-    
-    ifelse(input$sel_frame=="Other fauna",print(t),
-           ifelse(input$sel_frame=="Sharks",print(s),print(m)))
-  }, height=400)
-  
   ############### Data raw download ###############
   
   ## Table selection
@@ -107,13 +76,9 @@ function(input, output, session) {
   ###############Classification form###############################
 
 
-#  updateSelectizeInput(session,"sighting_id",
- #                      choices=unknown_sharks$sighting_id)
-  
   ############# Sightings (class, unclass, unusable) ##########
   
   ## Show table (unknown)
-  
   output$unclassified_sightings <- renderDataTable({
     input$submit
     mapUpdateUNClassified()},
@@ -121,17 +86,13 @@ function(input, output, session) {
   )
   
   ## Show table (unusable sightings)
-  
-  
   output$unusable_sightings <- renderDataTable({
     input$submit
     mapUpdateUnusable()},
     options = list(scrollX=TRUE, scrollCollapse=TRUE)
   )
   
-  
   ## Show table (known)
-  
   output$classified_sightings <- renderDataTable({
     input$submit
     mapUpdateClassified()},
@@ -140,20 +101,13 @@ function(input, output, session) {
 
   ############### Clean data download ###############
   
-  
-
-  
-  
   ## Table selection
   cleanDatasetInput <- reactive({
-    switch(input$known_dataset,
+    switch(input$clean_dataset,
            "Known sharks" = mapUpdateKnownSharks(),
            "Unique daily sightings" = mapUpdateUniqueTripSightings()
     )
   })
-  
-  
-  
   
   ## Show table (main panel)
   output$table_clean <- renderDT(
@@ -169,13 +123,46 @@ function(input, output, session) {
   ## Download CSV
   output$downloadCleanData <- downloadHandler(
     filename = function() {
-      paste(input$known_dataset, ".csv", sep = "")
+      paste(input$clean_dataset, ".csv", sep = "")
     },
     content = function(file) {
-      write.csv(datasetInput(), file, row.names = FALSE)
+      write.csv(cleanDatasetInput(), file, row.names = FALSE)
     }
   )
   
+  ### Graphs ####
   
+  output$plotTrip <- renderPlot({
+  start_date=trip_display%>%filter(date==min(date))%>%select(date)%>%distinct()%>%pull()
+  end_date=trip_display%>%filter(date==max(date))%>%select(date)%>%distinct()%>%pull()
+  trip_days=trip_display%>%mutate(day=yday(date))%>%
+    select(day)%>%pull()-yday(floor_date(start_date,"month"))
+    calendR(start_date = floor_date(start_date,"month"),
+            end_date = ceiling_date(end_date,"month") %m-% days(1),
+            special.days = trip_days,
+            special.col = "#bfe2f2",
+            low.col = "white")  })
 
+  output$plotSightings <- renderPlot({
+    mapUpdateClassified()%>%
+      ggplot(aes(sex,fill=sex))+
+      geom_bar(stat="count")+
+      theme_minimal()+
+      theme(legend.position = "none",
+            panel.grid = element_blank())+
+      scale_fill_brewer(type="seq")+
+      labs(x="Sex",y="Count")
+  })
+
+  output$plotMegaf <- renderPlot({
+    megaf_sightings%>%
+      mutate(espece=str_replace_all(espece,"_"," "))%>%
+      mutate(espece=fct_rev(fct_infreq(espece)))%>%
+      ggplot(aes(y=espece))+
+      geom_bar(stat="count",fill="lightblue")+
+      theme_minimal()+
+      theme(legend.position = "none")+
+      labs(y="",x="Number of sightings")
+  })
+    
 }

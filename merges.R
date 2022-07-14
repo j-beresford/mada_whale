@@ -1,7 +1,10 @@
 ## Tidy tables for display
 ######### Trip ################
-trip_vars<-c("trip_id","observer","operator","guide","day_type","meteo","sst","sea_state","visibility","meduses","salpes","krill","trichodesmium","trichodesmium_pct")
-trip_display <- trip %>% select(all_of(trip_vars))
+trip_vars<-c("trip_id","survey_start","observer","operator","guide","day_type","meteo","sst","sea_state","visibility","meduses","salpes","krill","trichodesmium","trichodesmium_pct")
+trip_display <- trip %>% select(all_of(trip_vars))%>%
+  mutate(date=as_date(survey_start))%>%
+  select(-survey_start)
+
 
 ##### Megafauna data ########
 megaf_vars<-c("espece",'espece_other',"megaf_count","megaf_notes")
@@ -38,5 +41,4 @@ shark_sightings_display <- mega %>%
 
 ########### 
 ##### Merge tables ######
-known_sharks<-sharks
 unknown_sharks<-sharks

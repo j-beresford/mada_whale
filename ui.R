@@ -31,8 +31,9 @@ fluidPage(
                                                      "Shark scar sightings",
                                                      "Megafauna sightings"),
                                       selected = "Shark sightings"),
-                          downloadButton("downloadData", "Download")),
-             mainPanel(DTOutput('table'))),
+                          downloadButton("downloadData", "Download"),
+                          width=3),
+             mainPanel(DTOutput('table'),width=9)),
     
     navbarMenu("Sightings",
          tabPanel("Unclassified",
@@ -52,10 +53,10 @@ fluidPage(
     tabPanel("Classification form",
              h4("This form links our sighting IDs with I3S shark IDs"),
              selectizeInput("sighting_id", "Enter sighting ID", 
-                         choices = unknown_sharks$sighting_id,
-                         options = list(
-                           placeholder = 'Please select an option below',
-                           onInitialize = I('function() { this.setValue(""); }'))),
+                      choices = mapUpdateUNClassified()$sighting_id,
+                      options = list(
+                        placeholder = 'Please type or copy/paste ID',
+                        onInitialize = I('function() { this.setValue(""); }'))),
              textInput("i3s_id", "Enter I3S ID", ""),
              radioButtons("no_id_reason","File as:",
                 choices = list(
@@ -63,28 +64,27 @@ fluidPage(
                             "To do - Bad photo/need advice"="advice_needed",
                             "Discarded - Photo is unusable"="unusable_sighting"),
                 selected = NA),
-             helpText("If you have an I3S ID, leave as default",
-                      "If no I3S ID, leave Q2 blank and select a reason."),
+             helpText("If you *do* have an I3S ID, leave as default. 
+                  *If not* leave Q2 blank and select a reason."),
              actionButton("submit", "Submit"),
              tags$hr(),
              DT::dataTableOutput("responses")),
     
     tabPanel("Clean Data",h3("View and download clean shark data"),
-             sidebarPanel(selectInput("known_dataset", 
+             sidebarPanel(selectInput("clean_dataset", 
                                       label = h3("Select Dataset"), 
                                       choices = list("Known sharks",
                                                      "Unique daily sightings")),
-                          downloadButton("downloadCleanData", "Download")),
-             mainPanel(DTOutput('table_clean'))),
+                          downloadButton("downloadCleanData", "Download"),
+                          width=3),
+             mainPanel(DTOutput('table_clean'),width=9)),
     
-    
-    tabPanel("Graphs",h3("Graphs for survey data"),
-             sidebarPanel(h3("Filters"),
-                          selectInput("sel_frame",
-                                      label = h5("Fauna"),
-                                      choices = list("Other fauna",
-                                                     "Megafauna",
-                                                     "Sharks"))),
-             mainPanel(plotOutput('plot',height="10")))
+    tabPanel("Graphs",
+             mainPanel(
+               tabsetPanel(
+                 tabPanel("Trips",plotOutput('plotTrip',height="400")),
+                 tabPanel("Sightings",plotOutput('plotSightings',height="400")),
+                 tabPanel("Megafauna",plotOutput('plotMegaf',height="400"))
+               )))
   )
 ) 
