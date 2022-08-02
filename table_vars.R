@@ -1,0 +1,92 @@
+######### Trip ################
+trip_vars<-c("trip_id",
+             "survey_start",
+             "observer",
+             "operator",
+             "guide",
+             "day_type",
+             "meteo",
+             "sst",
+             "sea_state",
+             "visibility",
+             "meduses",
+             "salpes",
+             "krill",
+             "trichodesmium",
+             "trichodesmium_pct")
+
+######## Mega fauna ###############
+megaf_vars<-c("date",
+              "espece",
+              'espece_other',
+              "megaf_count",
+              "megaf_notes")
+
+##### shark sightings #################
+shark_sightings_vars<-c("sighting_id",
+                        "survey_start",
+                        "observer",
+                        "left_id",
+                        "right_id",
+                        "sex",
+                        "size",
+                        "scars",
+                        "localisation",
+                        "taille_chasse",
+                        "behaviour",
+                        "code_of_conduct",
+                        "avoidance_behaviour",
+                        "end_encounter",
+                        "boats_min",
+                        "boats_max",
+                        "biopsy",
+                        "tag",
+                        "tag_no",
+                        "prey",
+                        "prey_tube_number",
+                        "prey_bio_tube_no",
+                        "shark_name_known")
+
+colnames(shark_scar_sightings)
+
+shark_scar_vars <-c("trip_id",
+                    "sighting_id",
+                    "observer",
+                    "survey_start",
+                    "scars",
+                    "scar_place",
+                    "scar_type")
+
+map_unclassified_vars<-c("sighting_id",
+                         "date",
+                         "observer",
+                         "operator",
+                         "trip_id",
+                         "sighting_number",
+                         "sex",
+                         "size",
+                         "scars",
+                         "tag",
+                         "drone",
+                         "prey",
+                         "biopsy",
+                         "shark_name_known",
+                         "no_id_reason")
+                         
+
+map_unusable_vars<-c("sighting_id",
+                         "date",
+                         "observer",
+                         "operator",
+                         "trip_id",
+                         "sighting_number",
+                         "sex",
+                         "size",
+                         "scars",
+                         "tag",
+                         "drone",
+                         "prey",
+                         "biopsy",
+                         "shark_name_known",
+                          "no_id_reason")
+

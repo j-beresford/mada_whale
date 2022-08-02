@@ -14,13 +14,14 @@ body {
 }
 
 .navbar-default {
-    background-color: #181f80 !important;
+    background-color: #0e1b8c !important;
     margin-left: -20px;
     margin-right: -20px;
+    alignment-baseline: ;
 }
 
 .navbar-default:hover {
-    background-color: #181f80 !important;
+    background-color: #0e1b8c !important;
 }
 
 .caret {
@@ -30,3 +31,4 @@ body {
 .title-logo {
   color: white !important;
 }
+
