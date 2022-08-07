@@ -6,8 +6,7 @@
 displayTrip <- function(vars){
   trip_display = df %>%
       mutate(date=as_date(survey_start))%>%
-      select(all_of(vars))%>%
-      select(-survey_start)
+      select(all_of(vars))
   return(trip_display)
 }
 ############### Megafauna #####################
@@ -44,10 +43,12 @@ mapUpdateUNClassified <- function() {
   source("mapping.R")
   uc<-shark_sightings%>%
     full_join(mapping,by="sighting_id")%>%
+    filter(left_id=="yes")%>%
     group_by(sighting_id)%>%
     mutate(t=n())%>%
     ungroup()%>%
     filter(t==1)%>%
+    filter(is.na(i3s_id))%>%
     mutate(date=as_date(survey_start))%>%
     select(all_of(map_unclassified_vars))
   return(uc)
@@ -59,7 +60,8 @@ mapUpdateUnusable <- function() {
   shark_sightings%>%
     full_join(mapping,by="sighting_id")%>%
     mutate(date=as_date(survey_start))%>%
-    filter(no_id_reason %in% c("unusable_sighting")|left_id=="no"|right_id=="no")%>%
+    filter(no_id_reason %in% c("unusable_sighting")|left_id=="no")%>%
+    mutate(no_id_reason=if_else(left_id=="no","No left ID",no_id_reason))%>%
     select(all_of(map_unusable_vars))
 }
 

@@ -41,13 +41,6 @@ fluidPage(theme=shinytheme("cerulean"),
              mainPanel(DTOutput('table'),width=9)),
     
     navbarMenu("Sightings",
-         tabPanel("Unclassified",
-            h3("All sightings still needing classification"),
-            h5("Sharks shown here have a sighting ID, but no photos or ws.org ID"),
-            checkboxInput("show_advice_needed",
-                          label = "Show advice needed",
-                          value=FALSE),
-            DTOutput("unclassified_sightings")),
          tabPanel("Unusable",
                   h3("All sightings that can't be classified"),
                   h5("Sharks shown here have a sighting ID, but no photos or ws.org ID"),
@@ -80,8 +73,11 @@ fluidPage(theme=shinytheme("cerulean"),
              hr(),
              actionButton("submit", "Submit")),
              mainPanel(
-               h4("Mapping file"),
-               DT::dataTableOutput("responses"))),
+               h3("Unclassified sightings"),
+               checkboxInput("show_advice_needed",
+                             label = "Show advice needed",
+                             value=FALSE),
+               DTOutput("unclassified_sightings"))),
     navbarMenu("Clean data",
     tabPanel("Summary Stats",
              h3("Summary Statistics"),
@@ -97,11 +93,11 @@ fluidPage(theme=shinytheme("cerulean"),
              mainPanel(DTOutput('table_clean'),width=9))),
     
     tabPanel("Graphs",
-             mainPanel(
+             mainPanel(width=12,
                tabsetPanel(
-                 tabPanel("Trips",plotOutput('plotTrip',height="400")),
-                 tabPanel("Sightings",plotOutput('plotSightings',height="400")),
-                 tabPanel("Megafauna",plotOutput('plotMegaf',height="400"))
+                 tabPanel("Trips",plotOutput('plotTrip',width="100%")),
+                 tabPanel("Sightings",plotOutput('plotSightings',width="100%")),
+                 tabPanel("Megafauna",plotOutput('plotMegaf',width="100%"))
                )))
   )
 ) 

@@ -45,17 +45,8 @@ function(input, output, session) {
     </ol>"
 ))
   
-  output$about_fieldcollect <- renderUI(HTML(
-    "A totally awesome start up founded by Justin Beresford. 
-          This is an example of what we'll do.
-    <ul>
-      <li>Survey design</li>
-      <li>Dashboarding and Analytics</li>
-      <li>Data storage</li>
-      </ul>"
-  ))
-      
-  formData <- reactive({
+
+    formData <- reactive({
     data <- sapply(fields, function(x) input[[x]])
     data
   })
@@ -128,7 +119,8 @@ function(input, output, session) {
     filter = "top",
     options = list(
       pageLength = 10,
-      scrollX=TRUE
+      scrollX=TRUE,
+      scrollY=TRUE
     )
   )
   
@@ -146,6 +138,16 @@ function(input, output, session) {
   ###############Classification form###############################
 
 
+  updateSelectizeInput(session,"sighting_id",
+                       choices = mapUpdateUNClassified()%>%
+                         pull(sighting_id),server = T)
+  observeEvent(input$submit,
+               {
+                 updateSelectizeInput(session,"sighting_id",
+                      choices = mapUpdateUNClassified()%>%
+                        pull(sighting_id))
+               })
+  
   ############# Sightings (class, unclass, unusable) ##########
   
   ## Show table (unknown)
@@ -162,14 +164,14 @@ function(input, output, session) {
         filter(!no_id_reason %in% c("advice_needed"))
     }
     uc},
-    options = list(scrollX=TRUE, scrollCollapse=TRUE)
+    options = list(scrollX=TRUE,scrollY=TRUE, scrollCollapse=TRUE),filter="top"
   )
   
   ## Show table (unusable sightings)
   output$unusable_sightings <- renderDataTable({
     input$submit
     mapUpdateUnusable()},
-    options = list(scrollX=TRUE, scrollCollapse=TRUE)
+    options = list(scrollX=TRUE,scrollY=TRUE, scrollCollapse=TRUE)
   )
   
   ## Show table (known)
@@ -182,8 +184,9 @@ function(input, output, session) {
   ############### Clean data download ###############
   
   output$summary_stats<-renderDataTable({
-    get_summary_stats(mapUpdateKnownSharks())
-  })
+    get_summary_stats(mapUpdateKnownSharks())},
+    options = list(scrollX=TRUE, scrollCollapse=TRUE)
+  )
   
   ## Table selection
   cleanDatasetInput <- reactive({
@@ -217,35 +220,44 @@ function(input, output, session) {
   ### Graphs ####
   
   output$plotTrip <- renderPlot({
-  start_date=trip%>%filter(date==min(date))%>%select(date)%>%distinct()%>%pull()
-  end_date=trip%>%filter(date==max(date))%>%select(date)%>%distinct()%>%pull()
-  trip_days=trip%>%mutate(day=yday(date))%>%
-    select(day)%>%pull()-yday(floor_date(start_date,"month"))
-    calendR(start_date = floor_date(start_date,"month"),
-            end_date = ceiling_date(end_date,"month") %m-% days(1),
-            special.days = trip_days,
-            special.col = "#bfe2f2",
-            low.col = "white")  })
-
-  output$plotSightings <- renderPlot({
-    mapUpdateClassified()%>%
-      ggplot(aes(sex,fill=sex))+
-      geom_bar(stat="count")+
-      theme_minimal()+
+    displayTrip(trip_vars)%>%
+      mutate(sst=as.numeric(sst))%>%
+      group_by(date)%>%
+      summarise(mean_sst=mean(sst,na.rm=TRUE),trips=n())%>%
+      ungroup()%>%
+      ggplot(aes(date,trips,fill=mean_sst))+
+      geom_col()+
+      scale_fill_distiller(type = "seq",palette = "Blues",direction = 1,limits=c(20,40))+
       theme(legend.position = "none",
             panel.grid = element_blank())+
-      scale_fill_brewer(type="seq")+
-      labs(x="Sex",y="Count")
+      theme_minimal()+
+      labs(y="Daily Dives",x="",fill="Sea surface temperature")
+    })
+
+  output$plotSightings <- renderPlot({
+    mapUpdateUniqueTripSightings()%>%
+      ggplot(aes(Date,fill=`Sex (mode)`))+
+      geom_bar(stat = "count")+
+      theme(legend.position = "none",
+            text = element_text(size=17),
+            panel.grid = element_blank())+
+      scale_fill_brewer(type="qual")+
+      theme_minimal()+
+      labs(y="Unique daily sightings",x="")
   })
 
   output$plotMegaf <- renderPlot({
     megaf_sightings%>%
       mutate(espece=str_replace_all(espece,"_"," "))%>%
-      mutate(espece=fct_rev(fct_infreq(espece)))%>%
-      ggplot(aes(y=espece))+
-      geom_bar(stat="count",fill="lightblue")+
-      theme_minimal()+
-      theme(legend.position = "none")+
+      mutate(espece=fct_infreq(espece))%>%
+      mutate(espece=str_to_title(espece))%>%
+      mutate(date=as_date(survey_start))%>%
+      ggplot(aes(date,fill=espece))+
+      geom_bar(stat="count")+
+      theme_bw()+
+      theme(legend.position = "none",
+            text = element_text(size=14))+
+      facet_wrap(.~espece)+
       labs(y="",x="Number of sightings")
   })
     

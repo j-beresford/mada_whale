@@ -1,6 +1,6 @@
 ######### Trip ################
 trip_vars<-c("trip_id",
-             "survey_start",
+             "date",
              "observer",
              "operator",
              "guide",
@@ -17,9 +17,11 @@ trip_vars<-c("trip_id",
 
 ######## Mega fauna ###############
 megaf_vars<-c("date",
+              "observer",
               "espece",
               'espece_other',
               "megaf_count",
+              "megaf_geo",
               "megaf_notes")
 
 ##### shark sightings #################
@@ -45,9 +47,8 @@ shark_sightings_vars<-c("sighting_id",
                         "prey",
                         "prey_tube_number",
                         "prey_bio_tube_no",
+                        "shark_geo",
                         "shark_name_known")
-
-colnames(shark_scar_sightings)
 
 shark_scar_vars <-c("trip_id",
                     "sighting_id",
@@ -66,10 +67,6 @@ map_unclassified_vars<-c("sighting_id",
                          "sex",
                          "size",
                          "scars",
-                         "tag",
-                         "drone",
-                         "prey",
-                         "biopsy",
                          "shark_name_known",
                          "no_id_reason")
                          
@@ -77,16 +74,13 @@ map_unclassified_vars<-c("sighting_id",
 map_unusable_vars<-c("sighting_id",
                          "date",
                          "observer",
-                         "operator",
-                         "trip_id",
                          "sighting_number",
+                         "operator",
+                         "guide",
+                         "day_type",
                          "sex",
                          "size",
                          "scars",
-                         "tag",
-                         "drone",
-                         "prey",
-                         "biopsy",
                          "shark_name_known",
                           "no_id_reason")
 
