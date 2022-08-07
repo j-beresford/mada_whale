@@ -5,6 +5,12 @@ rawdata<-GET(url,authenticate(u,pw),progress())
 p<-jsonlite::parse_json(rawdata)
 results<-p$results
 
+tablet_ids=data.frame(tablet_name=c("Justin Mobile","Orange","Amy Laptop","Justin Laptop"),
+                      client_identifier=c("collect:8FdYHpOdn4NijbBq",
+                                          "collect:LA3tDYnylZq5mFlv",
+                                          "ee.kobotoolbox.org:JWGByiliaVweMF0i",
+                                          "ee.kobotoolbox.org:xCPqKcFl8GV69TsD"))
+
 df<-tibble(list_col=results)%>%
   hoist(list_col,'sighting_repeat')%>%
   hoist(list_col,'_attachments')%>%
@@ -15,10 +21,9 @@ df<-tibble(list_col=results)%>%
   unnest_wider('_geolocation')%>%
   unnest_wider(list_col)%>%
   rename("trip_id"="_id")%>%
-  rename_with(~str_remove(., 'Faune/'))
-
-factors<-c("operator","trip_id","sighting_id","observer","left_id","right_id","sex","scars","localisation","taille_chasse","behaviour","code_of_conduct","avoidance_behaviour","end_encounter","biopsy")
-
+  rename_with(~str_remove(., 'Faune/'))%>%
+  full_join(tablet_ids,by="client_identifier")%>%
+  mutate_if(is.character,as.factor)
 
 numbers<-c("sighting_number","size","boats_min","boats_max")
 
@@ -29,8 +34,7 @@ all_sightings=df%>%
   rename(sighting_id=shark_uuid)%>%
   mutate(sighting_id=str_remove_all(sighting_id,"uuid:"))%>%
   mutate(sighting_id=str_sub(sighting_id,1,13))%>%
-  mutate_at(factors,factor)%>%
-  mutate_at(numbers,as.numeric)
+  mutate_at(factors,factor)
 
 
 shark_sightings=all_sightings%>%

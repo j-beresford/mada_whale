@@ -140,7 +140,7 @@ function(input, output, session) {
 
   updateSelectizeInput(session,"sighting_id",
                        choices = mapUpdateUNClassified()%>%
-                         pull(sighting_id),server = T)
+                         pull(sighting_id),selected = NA,server = T)
   observeEvent(input$submit,
                {
                  updateSelectizeInput(session,"sighting_id",
@@ -171,14 +171,14 @@ function(input, output, session) {
   output$unusable_sightings <- renderDataTable({
     input$submit
     mapUpdateUnusable()},
-    options = list(scrollX=TRUE,scrollY=TRUE, scrollCollapse=TRUE)
+    options = list(scrollX=TRUE,scrollY=TRUE, scrollCollapse=TRUE),filter="top"
   )
   
   ## Show table (known)
   output$classified_sightings <- renderDataTable({
     input$submit
     mapUpdateClassified()},
-    options = list(scrollX=TRUE, scrollCollapse=TRUE)
+    options = list(scrollX=TRUE, scrollCollapse=TRUE),filter="top"
   )
 
   ############### Clean data download ###############
