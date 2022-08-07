@@ -6,6 +6,7 @@
 displayTrip <- function(vars){
   trip_display = df %>%
       mutate(date=as_date(survey_start))%>%
+      mutate(all_sightings=lengths(sighting_repeat))%>%
       select(all_of(vars))
   return(trip_display)
 }
@@ -66,13 +67,13 @@ mapUpdateUnusable <- function() {
 }
 
 
-mapUpdateClassified <- function() {
+mapUpdateClassified <- function(vars) {
   source("mapping.R")
   shark_sightings%>%
     full_join(mapping,by="sighting_id")%>%
     filter(!is.na(i3s_id))%>%
     mutate(date=as_date(survey_start))%>%
-    select(all_of(map_unclassified_vars))
+    select(all_of(vars))
 }
 
 is_not_allowed <- function() {

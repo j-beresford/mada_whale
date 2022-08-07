@@ -177,7 +177,7 @@ function(input, output, session) {
   ## Show table (known)
   output$classified_sightings <- renderDataTable({
     input$submit
-    mapUpdateClassified()},
+    mapUpdateClassified(map_classified_vars)},
     options = list(scrollX=TRUE, scrollCollapse=TRUE),filter="top"
   )
 
@@ -220,45 +220,23 @@ function(input, output, session) {
   ### Graphs ####
   
   output$plotTrip <- renderPlot({
-    displayTrip(trip_vars)%>%
-      mutate(sst=as.numeric(sst))%>%
-      group_by(date)%>%
-      summarise(mean_sst=mean(sst,na.rm=TRUE),trips=n())%>%
-      ungroup()%>%
-      ggplot(aes(date,trips,fill=mean_sst))+
-      geom_col()+
-      scale_fill_distiller(type = "seq",palette = "Blues",direction = 1,limits=c(20,40))+
-      theme(legend.position = "none",
-            panel.grid = element_blank())+
-      theme_minimal()+
-      labs(y="Daily Dives",x="",fill="Sea surface temperature")
+    print(daily_dives_sst)
     })
 
   output$plotSightings <- renderPlot({
-    mapUpdateUniqueTripSightings()%>%
-      ggplot(aes(Date,fill=`Sex (mode)`))+
-      geom_bar(stat = "count")+
-      theme(legend.position = "none",
-            text = element_text(size=17),
-            panel.grid = element_blank())+
-      scale_fill_brewer(type="qual")+
-      theme_minimal()+
-      labs(y="Unique daily sightings",x="")
+    print(sightings_sex)
   })
 
   output$plotMegaf <- renderPlot({
-    megaf_sightings%>%
-      mutate(espece=str_replace_all(espece,"_"," "))%>%
-      mutate(espece=fct_infreq(espece))%>%
-      mutate(espece=str_to_title(espece))%>%
-      mutate(date=as_date(survey_start))%>%
-      ggplot(aes(date,fill=espece))+
-      geom_bar(stat="count")+
-      theme_bw()+
-      theme(legend.position = "none",
-            text = element_text(size=14))+
-      facet_wrap(.~espece)+
-      labs(y="",x="Number of sightings")
+    print(megaf_all)
   })
-    
+  
+  output$plotCorrs <- renderPlot({
+    print(correls)
+  })
+
+  output$plotMap <- renderPlot({
+    print(map)
+  })
+  
 }

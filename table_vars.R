@@ -6,6 +6,7 @@ trip_vars<-c("trip_id",
              "operator",
              "guide",
              "day_type",
+             "all_sightings",
              "meteo",
              "sst",
              "sea_state",
@@ -75,6 +76,19 @@ map_unclassified_vars<-c("sighting_id",
                          "shark_name_known",
                          "no_id_reason")
                          
+
+map_classified_vars<-c("sighting_id",
+                       "i3s_id",
+                       "date",
+                       "tablet_name",
+                       "observer",
+                       "operator",
+                       "trip_id",
+                       "sighting_number",
+                       "sex",
+                       "size",
+                       "scars",
+                       "shark_name_known")
 
 map_unusable_vars<-c("sighting_id",
                          "date",

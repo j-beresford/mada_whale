@@ -5,6 +5,7 @@ source("call_data.R")
 source("mapping.R")
 source("table_vars.R")
 source("functions.R")
+source("graphs.R")
 
 library(shinythemes)
 
@@ -96,7 +97,9 @@ fluidPage(theme=shinytheme("cerulean"),
              mainPanel(width=12,
                tabsetPanel(
                  tabPanel("Trips",plotOutput('plotTrip',width="100%")),
+                 tabPanel("Map",plotOutput('plotMap',width="100%")),
                  tabPanel("Sightings",plotOutput('plotSightings',width="100%")),
+                 tabPanel("Correlations",plotOutput('plotCorrs',width="100%")),
                  tabPanel("Megafauna",plotOutput('plotMegaf',width="100%"))
                )))
   )
