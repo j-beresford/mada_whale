@@ -28,7 +28,7 @@ function(input, output, session) {
   <li>Raw survey outputs are available to view in near real-time.</li>
   <li>Summary statistics and data visualisation are automised and available to view in the <i>clean data</i> and <i>graphs</i> tabs.</li>
   <li>The 'classifier' lets users assign I&sup3;S ID's to shark sightings. Armed with this information, NatureDB automates the merging of  
-  <dfn title='A sighting is defined as any shark for which a left ID is taken'>
+  <dfn title='A sighting is defined as any shark registered in the survey, regardless of whether a left ID is taken'>
   <u style='text-decoration:underline dotted'>shark sightings</u></dfn>
   into 
   <dfn title='A known shark is any shark to which we have assigned an  I&sup3;S ID'>
@@ -37,11 +37,11 @@ function(input, output, session) {
 
   output$about_instructions <- renderUI(HTML(
     "<ol>
-    <li>While at sea, fill in the survey</li>
-    <li>Check your sightings have appeared in <i>raw data</i> (you can filter by your name and date)</li>
-    <li>Upload your photos to I&sup3;S and, where possible, make a note of the I&sup3;S ID for each of your sightings.</li>
-    <li>Go to <i>classifier</i> and file each of your sightings as 'done'.</li>
-    <li>Check that your sighting information appears in the <i>clean data</i> tabs</li>
+    <li>While at sea, fill in  <a href='https://ee.kobotoolbox.org/x/PME7pT8m'>the survey</a></li>
+    <li>Check your sightings have appeared in <i>raw data</i> (Note: you can filter by your name, date, tablet etc). Results will take a few minutes to appear.</li>
+    <li>Upload your photos to I&sup3;S and, where an ID available, make a note of the I&sup3;S ID for each of your sightings.</li>
+    <li>Go to <i>classifier</i> and file each of your sightings as 'done', 'advice needed' or 'unusablke.</li>
+    <li>Check that your sighting information appears in the <i>classified sightings</i> tab s well as in the <i>clean data</i> tabs</li>
     </ol>"
 ))
   
@@ -154,13 +154,11 @@ function(input, output, session) {
   
   output$unclassified_sightings <- renderDataTable({
     input$submit
-    uc<-mapUpdateUNClassified()
-    
     if (input$show_advice_needed==TRUE){
-      uc<-uc%>%
+      uc<-mapUpdateUNClassified()%>%
         filter(no_id_reason=="advice_needed")
     } else {
-      uc<-uc%>%
+      uc<-mapUpdateUNClassified()%>%
         filter(!no_id_reason %in% c("advice_needed"))
     }
     uc},
@@ -192,7 +190,8 @@ function(input, output, session) {
   cleanDatasetInput <- reactive({
     switch(input$clean_dataset,
            "Known sharks" = mapUpdateKnownSharks(),
-           "Unique daily sightings" = mapUpdateUniqueTripSightings()
+           "Merged yearly sharks" = mapUpdateUniqueYearlySightings(),
+           "Merged daily sharks" = mapUpdateUniqueTripSightings()
     )
   })
   
@@ -235,8 +234,22 @@ function(input, output, session) {
     print(correls)
   })
 
-  output$plotMap <- renderPlot({
-    print(map)
+  output$plotMegafMap <- renderPlotly({
+    print(megaf_map)
   })
+  
+  output$plotSharkMap <- renderPlotly({
+    print(shark_map)
+  })
+  
+  output$plotMegafDensity <- renderPlotly({
+    print(megaf_density)
+  })
+
+  output$plotSharkDensity <- renderPlotly({
+    print(shark_density)
+  })
+  
+  
   
 }

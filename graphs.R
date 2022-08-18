@@ -1,5 +1,4 @@
 daily_dives_sst<-displayTrip(trip_vars)%>%
-  mutate(sst=as.numeric(sst))%>%
   group_by(date)%>%
   summarise(mean_sst=mean(sst,na.rm=TRUE),trips=n())%>%
   ungroup()%>%
@@ -14,7 +13,7 @@ daily_dives_sst<-displayTrip(trip_vars)%>%
   labs(y="Daily Dives",x="",fill="Sea surface temperature")
 
 sightings_sex <-mapUpdateUniqueTripSightings()%>%
-  mutate(`Sex (mode)`=if_else(is.na(`Sex (mode)`),"undetermined",`Sex (mode)`))%>%
+  mutate(`Sex (mode)`=if_else(is.na(`Sex (mode)`),"Undetermined",`Sex (mode)`))%>%
   ggplot(aes(Date,fill=`Sex (mode)`))+
   geom_bar(stat = "count")+
   theme_minimal()+
@@ -64,21 +63,52 @@ correls<-displayTrip(trip_vars)%>%
 
 
 
-labs=data.frame(
-  long=c(45,45.4,45.2),
-  lat=c(-14,-14.2,-13.8),
-  group=c(1,1,1),
-  type=c("shark","shark","megafauna"))
-
-
 map<-map_data("world","Madagascar")%>%
+  filter(!subregion  %in% c("Ile Sainte-Marie"))%>%
   mutate(subregion=if_else(is.na(subregion),"Mainland",subregion))%>%
   mutate(subregion=fct_reorder(subregion,lat,mean))%>%
   ggplot(aes(x = long, y = lat, group = group)) +
   geom_polygon(aes(fill=subregion))+
+  theme(panel.background = element_rect(fill = "lightblue"),
+        panel.grid = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank())+
   coord_fixed(1.3)+
-  geom_point(data=labs, aes(x=long, y=lat,color=type),size=2)+
-  scale_fill_brewer(palette = "Accent")+
-  theme_void()+
-  labs(fill="",color="")
+  scale_fill_manual(values = c("darkgreen","red"))+
+  labs(fill="",color="",x="",y="")
+
+megaf_cords=megaf_sightings%>%
+  filter(!is.na(megaf_geo))%>%
+  mutate(lat=word(megaf_geo,1))%>%
+  mutate(long=word(megaf_geo,2))%>%
+  mutate(group=1)%>%
+  select(espece,group,megaf_count,megaf_number,long,lat)%>%
+  mutate(espece=factor(espece))%>%
+  mutate(long=as.numeric(long))%>%
+  mutate(lat=as.numeric(lat))
+  
+megaf_map<-map+geom_point(data=megaf_cords, aes(x=long, y=lat,color=espece),
+                          alpha=0.5,size=1)
+megaf_map<-ggplotly(megaf_map)%>%layout(height=600,width=600)
+
+megaf_density<-map+geom_density2d(data=megaf_cords,aes(x=long, y=lat))
+megaf_density<-ggplotly(megaf_density)%>%layout(height=600,width=600)
+
+
+shark_cords=shark_sightings%>%
+  filter(!is.na(shark_geo))%>%
+  mutate(lat=word(shark_geo,1))%>%
+  mutate(long=word(shark_geo,2))%>%
+  mutate(group=1)%>%
+  select(sex,size,scars,code_of_conduct,long,lat,group)%>%
+  mutate(long=as.numeric(long))%>%
+  mutate(lat=as.numeric(lat))
+
+shark_map<-map+geom_point(data=shark_cords, aes(x=long, y=lat,color=sex),
+                          alpha=0.5,size=1)
+shark_map<-ggplotly(shark_map)%>%layout(height=600,width=600)
+
+shark_density<-map+geom_density2d(data=shark_cords,aes(x=long, y=lat))
+shark_density<-ggplotly(shark_density)%>%layout(height=600,width=600)
+
 

@@ -98,9 +98,6 @@ map_unusable_vars<-c("sighting_id",
                          "operator",
                          "guide",
                          "day_type",
-                         "sex",
-                         "size",
-                         "scars",
                          "shark_name_known",
-                          "no_id_reason")
+                         "no_id_reason")
 
