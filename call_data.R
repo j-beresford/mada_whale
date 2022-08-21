@@ -1,4 +1,6 @@
 url<-"https://kf.kobotoolbox.org/api/v2/assets/aJ5NwkApvziLAUE7i9eHcn/data.json"
+u="madawhale"
+pw="Wh6l3Sh6rk"
 
 # Call form_meta API and Parse JSON
 rawdata<-GET(url,authenticate(u,pw),progress())

@@ -76,7 +76,8 @@ function(input, output, session) {
       aws.s3::put_object(file = "mapping",object="mapping",bucket="mada-whales")
       output$error_message<-renderUI({HTML(as.character(""))})
     }
-  })
+
+      })
   
   # Show details for selected sighting
 

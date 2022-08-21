@@ -1,7 +1,6 @@
 rm(list=ls())
-u<-Sys.getenv('U')
-pw<-Sys.getenv('PW')
-
+#u<-Sys.getenv('U')
+#pw<-Sys.getenv('PW')
 source("packages.R")
 source("call_data.R")
 source("mapping.R")
